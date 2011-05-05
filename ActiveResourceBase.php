@@ -472,7 +472,7 @@ abstract class ActiveResourceBase {
    ** Attribute style getter
    */
   function __get($k) {
-    if (isset($this->_data[$k])) {
+    if (array_key_exists($k, $this->_data)) {
       return $this->_data[$k];
     }
     return $this->{$k};
@@ -482,7 +482,7 @@ abstract class ActiveResourceBase {
    ** Attribute style setter
    */
   function __set($k, $v) {
-    if (isset ($this->_data[$k])) {
+    if (array_key_exists($k, $this->_data)) {
       $this->_data[$k] = $v;
       return;
     }
