@@ -261,7 +261,7 @@ abstract class ActiveResourceBase {
   protected $_data = array();
 
   /**
-   ** @param $data assoc attributes map to initialize the instance with.
+   ** @param assoc $data attributes map to initialize the instance with.
    */
   function __construct($data = array()) {
     $this->_data = $data;
