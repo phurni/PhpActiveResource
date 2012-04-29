@@ -264,7 +264,7 @@ abstract class ActiveResourceBase {
    ** @param assoc $data attributes map to initialize the instance with.
    */
   function __construct($data = array()) {
-    $this->_data = $data;
+    $this->_set_data($data);
   }
 
   /**
@@ -276,10 +276,10 @@ abstract class ActiveResourceBase {
    ** @endcode
    */
   function save() {
-    if (isset($this->_data['id'])) {
-      return $this->_put(array('id' => $this->_data['id']), $this->_encode($this->_data));
+    if ($this->is_new_record()) {
+      return $this->_post(array(), $this->_encode($this->_get_data()));
     }
-    return $this->_post(array(), $this->_encode($this->_data));
+    return $this->_put(array('id' => $this->_get_id()), $this->_encode($this->_get_data()));
   }
 
   /**
@@ -288,7 +288,7 @@ abstract class ActiveResourceBase {
    ** DELETE /collection/id.xml
    */
   function destroy() {
-    return $this->_delete(array('id' => $this->_data['id']));
+    return $this->_delete(array('id' => $this->_get_id()));
   }
 
   /**
@@ -323,7 +323,7 @@ abstract class ActiveResourceBase {
    ** @return Object A simple object (StdClass) representing the result body (passed to the serializer)
    */
   function get($method, $options = array()) {
-    return $this->_decode_object($this->_get(array_merge($options, array('action' => $method, 'id' => isset($this->_data['id']) ? $this->_data['id'] : null))));
+    return $this->_decode_object($this->_get(array_merge($options, array('action' => $method, 'id' => $this->_get_id()))));
   }
 
   /**
@@ -340,7 +340,7 @@ abstract class ActiveResourceBase {
    ** @return Object A simple object (StdClass) representing the result body (passed to the serializer)
    */
   function post ($method, $options = array(), $body = '') {
-    return $this->_decode_object($this->_post(array_merge($options, array('action' => $method, 'id' => isset($this->_data['id']) ? $this->_data['id'] : null)), $this->_encode($body)));
+    return $this->_decode_object($this->_post(array_merge($options, array('action' => $method, 'id' => $this->_get_id())), $this->_encode($body)));
   }
 
   /**
@@ -357,7 +357,7 @@ abstract class ActiveResourceBase {
    ** @return Object A simple object (StdClass) representing the result body (passed to the serializer)
    */
   function put($method, $options = array(), $body = '') {
-    return $this->_decode_object($this->_put(array_merge($options, array('action' => $method, 'id' => isset($this->_data['id']) ? $this->_data['id'] : null)), $this->_encode($body)));
+    return $this->_decode_object($this->_put(array_merge($options, array('action' => $method, 'id' => $this->_get_id())), $this->_encode($body)));
   }
 
   /**
@@ -373,12 +373,17 @@ abstract class ActiveResourceBase {
    ** @return Object A simple object (StdClass) representing the result body (passed to the serializer)
    */
   function delete($method, $options = array()) {
-    return $this->_decode_object($this->_delete(array_merge($options, array('action' => $method, 'id' => isset($this->_data['id']) ? $this->_data['id'] : null))));
+    return $this->_decode_object($this->_delete(array_merge($options, array('action' => $method, 'id' => $this->_get_id()))));
   }
 
   /// Returns the data as a simple object
   function to_object() {
-    return (object) $this->_data;
+    return (object) $this->_get_data();
+  }
+  
+  /// Returns wether this object has never been saved
+  function is_new_record() {
+    return $this->_get_id();
   }
 
   /// Generate URL based on object identity and options as query string parameters
@@ -468,12 +473,46 @@ abstract class ActiveResourceBase {
     return $retval;
   }
 
+  /*
+   * Sets multiple attributes for the record
+   */
+   
+  protected function _set_data($data) {
+    $this->_data = $data;
+  }
+
+  /*
+   * Sets an attribute for the record
+   */
+   
+  protected function _set_attribute($name, $value) {
+    $this->_data[$name] = $value;
+  }
+  
+  /*
+   * Returns the attributes of the record
+   */
+   
+  protected function _get_data() {
+    return $this->_data;
+  }
+
+  /*
+   * Returns the id of the record or null if it is a freshly created one
+   */
+  
+  protected function _get_id() {
+    $data = $this->_get_data();
+    return isset($data['id']) ? $data['id'] : null;
+  }
+
   /**
    ** Attribute style getter
    */
   function __get($k) {
-    if (array_key_exists($k, $this->_data)) {
-      return $this->_data[$k];
+    $data = $this->_get_data();
+    if (array_key_exists($k, $data)) {
+      return $data[$k];
     }
     return $this->{$k};
   }
@@ -482,8 +521,9 @@ abstract class ActiveResourceBase {
    ** Attribute style setter
    */
   function __set($k, $v) {
-    if (array_key_exists($k, $this->_data)) {
-      $this->_data[$k] = $v;
+    $data = $this->_get_data();
+    if (array_key_exists($k, $data)) {
+      $this->_set_attribute($k, $v);
       return;
     }
     $this->{$k} = $v;
@@ -495,11 +535,11 @@ abstract class ActiveResourceBase {
   function set($k, $v = false) {
     if (!$v && is_array($k)) {
       foreach ($k as $key => $value) {
-        $this->_data[$key] = $value;
+        $this->_set_attribute($key, $value);
       }
     }
     else {
-      $this->_data[$k] = $v;
+      $this->_set_attribute($k, $v);
     }
     return $this;
   }
