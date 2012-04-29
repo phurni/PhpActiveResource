@@ -390,6 +390,9 @@ abstract class ActiveResourceBase {
 
   /// Generate URL based on object identity and options as query string parameters
   protected function _url_for($options) {
+    if (is_string($options))
+      return $options;
+    
     if (isset($options['base_uri'])) {
       $url = $this->site . $options['base_uri'];
     }
