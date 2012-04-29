@@ -60,7 +60,7 @@ class TypeMarshaller {
 	 ** @return string The matching class name
 	 */	 
 	function class_name_for($type) {
-	  return $this->type_map[$type];
+	  return isset($this->type_map[$type]) ? $this->type_map[$type] : null;
 	}
 
 	/**
