@@ -256,6 +256,8 @@ abstract class ActiveResourceBase {
   /// The error number if an error occurred.
   var $error_code = false;
 
+  /// The attributes list to scan for the string representation of this record. See __toString()
+  var $to_string_attributes = array('name', 'label', 'caption', 'title');
 
   // The data of the current object, accessed via the anonymous get/set methods.
   protected $_data = array();
@@ -544,6 +546,19 @@ abstract class ActiveResourceBase {
     return $this;
   }
 
+  /**
+   ** Return the string representation of this object.
+   ** It will return the value of the first attribute present that is named after the ones
+   ** stored in the array $to_string_attributes.
+   */
+  public function __toString() {
+    $data = $this->_get_data();
+    foreach($this->to_string_attributes as $attribute_name) {
+      if (isset($data[$attribute_name]))
+        return $data[$attribute_name];
+    }
+    return parent::__toString();
+  }
 }
 
 ?>
