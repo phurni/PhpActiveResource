@@ -26,7 +26,7 @@ require_once ('ActiveResourceBase.php');
  * @license http://www.opensource.org/licenses/mit-license.php Licensed under the MIT License
  * @author Pascal Hurni <phi@ruby-reactive.org> http://github.com/phurni
  */
-class AuthenticatedActiveResourceBase extends ActiveResourceBase {
+class AuthenticatedActiveResourceBase extends ConnectednessActiveResourceBase {
 	/// The application key used to identify all requests
 	var $app_key = false;
 
