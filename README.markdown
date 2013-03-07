@@ -23,9 +23,11 @@ Copyright 2010 Pascal Hurni
 
 ## Usage
 
-```c#
-    ActiveResource.php
-    <?php
+ActiveResource.php:
+
+```php
+<?php
+
     require_once('ActiveResourceBase.php');
     require_once('CurlTransporter.php');
     require_once('XmlSerializer.php');
@@ -47,20 +49,26 @@ Copyright 2010 Pascal Hurni
 
     ActiveResource::$marshaller = new TypeMarshaller(array('User' => 'Person', 'Member' => 'Person', 'Project' => 'weird_PHP_classname_for_Project'));
     
-    ?>
+?>
+```
 
-    Person.php
-    <?php
+Person.php
+
+```php
+<?php
     require_once ('ActiveResource.php');
 
     class Person extends ActiveResource {
         var $site = 'http://localhost:3000/';
         var $element_name = 'person';
     }
-    ?>
+?>
+```
 
-    UseCases.php
-    <?php
+UseCases.php
+
+```php
+<?php
     require_once ('Person.php');
 
     // create a new person
@@ -114,5 +122,5 @@ Copyright 2010 Pascal Hurni
       echo $person->error_message;
     }
 
-    ?>
+?>
 ```
