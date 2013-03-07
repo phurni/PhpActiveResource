@@ -23,6 +23,7 @@ Copyright 2010 Pascal Hurni
 
 ## Usage
 
+```c#
     ActiveResource.php
     <?php
     require_once('ActiveResourceBase.php');
@@ -114,3 +115,4 @@ Copyright 2010 Pascal Hurni
     }
 
     ?>
+```
