@@ -72,7 +72,7 @@ UseCases.php
     require_once ('Person.php');
 
     // create a new person
-    $person = new Person( array('firstname => 'John', 'lastname => 'Doe') );
+    $person = new Person( array('firstname' => 'John', 'lastname' => 'Doe') );
     if (!$person->save()) {
       echo $person->error_message;
     }
@@ -92,7 +92,7 @@ UseCases.php
     }
  
     // find people with some options (passed as query string parameters)
-    $people = $Person->find('all', 'lastname' => 'Doe');
+    $people = $Person->find('all', array('lastname' => 'Doe'));
 
     // find a known person
     $person = $Person->find(123);
